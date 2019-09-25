@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fe201ccd-487e-4da4-af56-e7f1c412b45b" name="Default Changelist" comment="stuck at deciding how to insert, maybe see into intera">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cse250.iml" beforeDir="false" afterPath="$PROJECT_DIR$/cse250.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cse250/pa1/DataEntryStore.scala" beforeDir="false" afterPath="$PROJECT_DIR$/src/cse250/pa1/DataEntryStore.scala" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,6 +26,13 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="1" />
   </component>
@@ -36,7 +43,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="ScalaTest" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.ScalaTest" value="org.scalatest.FlatSpec" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../pa1-solution/PA1" />
+    <property name="last_opened_file_path" value="$USER_HOME$/pa1-solution/PA1" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -159,6 +166,7 @@
       <option name="presentableId" value="Default" />
       <updated>1568597089638</updated>
       <workItem from="1569268460132" duration="16033000" />
+      <workItem from="1569366399348" duration="12979000" />
     </task>
     <servers />
   </component>
@@ -170,7 +178,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
