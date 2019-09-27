@@ -18,21 +18,21 @@
 package cse250.pa1
 
 import cse250.objects.EmbeddedListNode
+import util.control.Breaks._
 
-class DataEntryStore[A >: Null <: AnyRef](private val capacity: Int = 100)
+class DataEntryStore[A >: Null <: AnyRef](private val capacity: Int = 1000)
   extends collection.mutable.Seq[A] {
 
   //array of type  populated by 100 emb list
-  private val dataArray = Array.fill[EmbeddedListNode[A]](capacity)(new EmbeddedListNode[A])
+  private val dataArray: _root_.scala.Array[_root_.cse250.objects.EmbeddedListNode[A]] = Array.fill[EmbeddedListNode[A]](capacity)(new EmbeddedListNode[A])
   private var headIndex = -1
   private var tailIndex = -1
   private var numStored = 0
   var count = 0
 
+
   /** Inserts element to tail of list. */
   def insert(elem: A): Unit = {
-
-    //TODO: null stuff, iterator maybe,
 
     //if there are no things stored, add it to the list
 
@@ -48,54 +48,60 @@ class DataEntryStore[A >: Null <: AnyRef](private val capacity: Int = 100)
       tailIndex = 0
       numStored += 1
     }
+
     else {
       // if there's an empty space its gonna populate it
-      if (dataArray(numStored).value == null) {
-        dataArray(numStored).value = elem
-        //node.prev becomes the index of the latest pushed node
-        dataArray(numStored).prev = tailIndex
-
-        //checks where in the array is the current element and marks it it newest index
-        for (i <- 0 until capacity - 1) {
-          if (dataArray(i).value == elem) {
+      if (numStored != capacity) {
+        // check in every node where NULL is
+        breakable(for (i <- 0 until capacity) {
+          if (dataArray(i).value == null) {
+            //changes null to new value
+            dataArray(i).value = elem
+            //current node value previous becomes the last tail index
+            dataArray(i).prev = tailIndex
+            //last tailIndex node next value becomes index of current tail
+            dataArray(tailIndex).next = i
+            //tail becomes current node index
             tailIndex = i
-
+            numStored += 1
+            break
           }
-        }
-        //previous node.next will become the newest tail index (it points where in the array is the current node)
+        })
 
-        dataArray(numStored - 1).next = tailIndex
-
-        /** think about modifying before and after nodes */
-
-        numStored += 1
       }
-      //now if the node in the array is not occupied
-      //its going to replace the head value with new elem
-      //new elem is going to be tailIndex and newest element
+      //now if every node in the array is occupied
+      //its going to replace the head value with new node
+      //new node is going to be tailIndex and newest element
       //it should update the second oldest entry as the oldest
-
-      //TODO: check if its updating the right values
       else {
         //checks where in the array the head is, since the head.prev is always -1
-        for (j <- 0 until capacity - 1) {
+        breakable(for (j <- 0 until capacity) {
+
+
           if (dataArray(j).prev == -1) {
             //once we find head we are going to replace its value with the given elem value
             dataArray(j).value = elem
-            //the node.prev will become the latest
-            dataArray(j).prev = tailIndex
-            tailIndex = j
+            //the node.next is the second oldest
+            headIndex = dataArray(j).next
+            //second oldest (now oldest) has .prev -1
+            dataArray(headIndex).prev = -1
 
-            //how to find second oldest?
-            // e3 -> e4 -> e5
-            // remove e3 and e4 and how do you know e5 is the oldest?
+            //prev is gonna be the lastIndex before lastIndex becomes current node
+            dataArray(j).prev = tailIndex
+
+            dataArray(tailIndex).next = j
+
+            tailIndex = j
+            //node will have no next since its newest node
+            dataArray(j).next = -1
+            //node prev should be
+
+            //and the tail index will become the index where this new node is
+            break
           }
-          //second oldest is going to be where the node.prev is the head index
-          //headIndex is going to become index of second oldest
-          if(dataArray(j).prev == headIndex){
-            headIndex = j
-          }
-        }
+          // check if the node had the headIndex as its prev, so we can make it the new head
+
+        })
       }
 
     }
@@ -104,19 +110,106 @@ class DataEntryStore[A >: Null <: AnyRef](private val capacity: Int = 100)
 
   /** Removes all copies of the given element. */
   def remove(elem: A): Boolean = {
-    //when null the prev and next should always be -1
     // remember to update numstored
-    return false
+
+    var switch = false
+
+    for (i <- 0 until capacity) {
+      if (dataArray(i).value == elem) {
+        switch = true
+      }
+    }
+    for (i <- 0 until capacity) {
+      if (dataArray(i).value == elem) {
+        //changes node value to null
+        dataArray(i).value = null
+
+        //if the node is the head
+        //change the next node to be new head and headIndex
+        if (dataArray(i).prev == -1 && dataArray(i).next != -1) {
+          dataArray(dataArray(i).next).prev = -1
+          headIndex = dataArray(i).next
+        }
+        //if the node is the tail
+        //change the next node to be the new tail and tailIndex
+        else if (dataArray(i).next == -1 && dataArray(i).prev != -1) {
+
+          headIndex = dataArray(i).prev
+        }
+        else if (dataArray(i).next == -1 && dataArray(i).prev == -1) {
+          headIndex = -1
+          tailIndex = -1
+
+        }
+        //if the node is neither head or tail
+        //modify the nodes before and after
+        else {
+          //the node.next of the .prev of the deleted node is going to become the node index of the deleted node.next
+          dataArray(dataArray(i).prev).next = dataArray(i).next
+          //the node.prev of the .next of the deleted node is going to become the node index of the deleted node.prev
+          dataArray(dataArray(i).next).prev = dataArray(i).prev
+
+        }
+
+        //change the values of the node after we use them to find prev and next to change those too
+        dataArray(i).prev = -1
+        dataArray(i).next = -1
+
+        //remember to change numstored
+        numStored -= 1
+
+      }
+    }
+
+    for (i <- 0 until capacity) {
+      if (dataArray(i).value == elem) {
+        return false
+      }
+    }
+    if (!switch) {
+      return false
+    }
+
+    return true
   }
 
+
   /** Returns the count of nodes containing given entry. */
-  def countEntry(entry: A): Int = return 0
+  def countEntry(entry: A): Int ={
+
+    var count = 0
+
+    for (i <- 0 until capacity) {
+      if (dataArray(i).value == entry) {
+        count += 1
+      }
+    }
+    count
+  }
+
+
 
   /** Gets the element at the specified index. */
-  override def apply(idx: Int): A ={}
+  override def apply(idx: Int): A ={
+    var returnVal: A = dataArray(0).value
+    var head = headIndex
+//    for (elem <- iterator) {
+//      if (elem == idx) {
+//         returnVal = iterator.next
+//      }
+//    }
+    if(iterator == idx){
+      returnVal = iterator.next
+    }
+    returnVal
+  }
 
   /** Replaces element at given index with a new value. */
-  override def update(idx: Int, elem: A): Unit = {}
+  override def update(idx: Int, elem: A): Unit = {
+
+      dataArray(idx).value = elem
+    }
+
 
   /** Returns an Iterator that can be used only once. */
   def iterator: Iterator[A] = new Iterator[A] {
@@ -125,7 +218,7 @@ class DataEntryStore[A >: Null <: AnyRef](private val capacity: Int = 100)
     override def hasNext: Boolean = current != -1
 
     override def next(): A = {
-      val prev = current
+      val prev: Int = current
       current = dataArray(current).next
       dataArray(prev).value
     }
